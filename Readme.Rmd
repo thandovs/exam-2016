@@ -4,18 +4,22 @@ author: "Thando Shabalala"
 date: "August 31, 2016"
 output: html_document
 ---
-# Question1
+# Question 1
 
 ##Null Hypothesis
 * There is no relationship between oral body temperature and heart rate
 
 ##Alternative Hypothesis
-* A directly proprotional relationship exists between oral body temperature and heart rate.
+* There is a relationship exists between oral body temperature and heart rate.
 
-##Statistical test
+##Statistical Test(s)
 * ANOVA
-###Assumptions of the statistical test
-* 
+## Assumptions of the statistical test
+* the distribution is normal
+* equal variance accros groups
+*data are unmatched
+*errors are independent
+
 ```{r question1}
 library(tidyr)
 library(dplyr)
@@ -35,23 +39,25 @@ legend(37.5,85, c("Male", "Female"), fill = c("pink", "black"))
 
 ```
 ##Outcome Analysis
-* Inferences with this data across sexes must be cautious as most of the heart rate inputs for the females are missing 
-* However, considering only male heart rates, the data suggestss that there is a somewhat directly proportional relationship between 
+* There is a relationship between the body temperature and heart rate especially in the males since they have more data.Therefore we can reject the null hypothesis.
 
 #Question2
 
 ##Null Hypothesis
-* There is no relationship between handednes and ataxic walking in intoxicated individuals
+* Intoxication does not affect the handedness and ataxic walking.
 
 ##Alternative Hypothesis
-* Ataxic walking in intoxicated individuals and hadedness are related. Individuals tend to orientate themselves in accordance with the dominant side.
+* Intoxication affects handedness and ataxic walking.
 
-##Statistical Test
-* Wilcoxin rank-sum 
-###Assumptions of the statistical test
-* independent errors
-* data is unmatched (as comparison across are being made for example)
-* samples are drawn from populations witht the same shape distribution
+##Statistical Test(s)
+
+* Wilcoxin rank-sum test
+
+##Assumptions of the statistical test
+* The samples are drawn from populations of the same shape
+* errors are independent
+* Data are unmatched 
+
 ```{r question2}
 library(tidyr)
 library(dplyr)
@@ -80,24 +86,17 @@ wilcox.test(final_position~handedness,data = q2data,paired = FALSE)
 par(mfrow = c(1,1),mar = c(4, 4, 2, 1),oma = c(0, 0, 1, 0))            
 ```
 ##Outcome Analysis
-* The null hypothesis may be rejected as handedness was shown to be related with first stumble (_p_ <0.05) and final position (_p_ = 0.04). These results illustrate that intoxicated individuals are more likely to exhibit ataxic gait that is skewed to her/his dominant side.
+Intoxication affects how a person is poitioned in their gait, there is a relationship between stumbling and handedness as well as stumbling and positioning.The pvalue was 0.04.So we can reject the null hypothesis.
+
+
 
 #Question3
 
 ##Null Hypothesis
-* There is nor relationsip between running time and calories
+* Running time doesn't calorie consumption.
 
 ##Alternative Hypothesis
-* There is a directly proportional relatiolnship between running time and caloreies consumed
-
-##Statistical Test(s)
-* Linear Regression
-###Assumptions of the statistical test
-* linear relationship exists between the variables
-* independent observations
-* x variable measured without error
-* normally distributed residuals
-* homoskedastic residuals
+* Running time improves calorie consumption.
 
 ```{r question3}
 library(tidyr)
@@ -145,26 +144,34 @@ qqline(q3cal.reg$residuals)
 # Overall Title
 mtext("Regression analysis", outer = TRUE)
 ```
-##Outcome Analysis
-* The data fits all assumptions of a linear regression, including homoskedasticity and normal distribution of the residuals.
-* The variables have a fairly strong negative correlation (-0.07). Because the _p_ value is small (0.002), the null hypothesis can be rejected. 
-* CONCLUSION: running time and calorie consumption are inversely proportional 
+##Statistical Test(s)
+ *Linear regression 
+##Assumptions of the statistical test
+* Ran a linear regression to see if there was a linear trend between x and y
+* A qqplot to check if the residuals were normally distributed 
+*homoskedastic test to see if the residuals had the same variance for all fitted values of x and y.
+
+##Intepretation
+* The plot shows that there is a strong inverse relationship between running time and calorie consumption.The more time the person runs the more time the more time they spend running the less the more calories they consume.
+
+##Amount of calories consumed 
+* At 30 minutes the person would consume about 420 calories
 
 #question4
-```{r question4}
+```{r question4 ,fig.path = './figures/', dev = 'pdf'}
 
 foo <- rnorm(10000, mean = 60, sd = 3) # final mark
 bar <- rnorm(10000, mean = 68, sd = 5) # project mark
 baz <- rep(seq(from = 1997, to = 2006), each = 1) # years
 
-years <- sample(baz, 150, replace = TRUE,prob = c(0.05, 0.05, 0.08, 0.08, 0.1, 0.13, 0.14, 0.13, 0.12, 0.12))
+year <- sample(baz, 150, replace = TRUE,prob = c(0.05, 0.05, 0.08, 0.08, 0.1, 0.13, 0.14, 0.13, 0.12, 0.12))
 
-projectmark <- sample(bar, 150, replace = TRUE)
+project_mark <- sample(bar, 150, replace = TRUE)
 
-finalmark <- sample(foo, 150, replace = TRUE)
+final_mark <- sample(foo, 150, replace = TRUE)
 
-q4plot <- data_frame(year = years,projectmark = round(projectmark, 1),finalmark = round(finalmark, 1)) %>%
-arrange(years)
+q4plot <- data_frame(year = year,project_mark = round(project_mark, 1),final_mark = round(final_mark, 1)) %>%
+arrange(year)
 
 # View
 q4plot
@@ -176,5 +183,5 @@ data_tidy <- q4plot %>%
     arrange(year)
 
 # Plot
-with (data_tidy, boxplot(value ~ key,main = "Marks",ylab = "Percentage"))
+with (data_tidy, boxplot(value ~ key,ylab="percentages, main="percentage of year marks over the years"))
 ```
