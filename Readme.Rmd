@@ -1,0 +1,180 @@
+---
+title: "Exam 2016 "
+author: "Thando Shabalala"
+date: "August 31, 2016"
+output: html_document
+---
+# Question1
+
+##Null Hypothesis
+* There is no relationship between oral body temperature and heart rate
+
+##Alternative Hypothesis
+* A directly proprotional relationship exists between oral body temperature and heart rate.
+
+##Statistical test
+* ANOVA
+###Assumptions of the statistical test
+* 
+```{r question1}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+
+# View and Import Dataset Question 1 CSV
+q1 <- read.csv("question1.csv")
+qdset <- tbl_df(q1)
+q1
+
+# Plots
+plot(q1$male ~ q1$body_temperature,
+     col="pink",main = "Mean oral body temperature and heart rate at rest in male and female students",ylab = " Heart Rate",xlab = "Oral Body Temperature")
+points(q1$female)
+legend(37.5,85, c("Male", "Female"), fill = c("pink", "black"))
+
+```
+##Outcome Analysis
+* Inferences with this data across sexes must be cautious as most of the heart rate inputs for the females are missing 
+* However, considering only male heart rates, the data suggestss that there is a somewhat directly proportional relationship between 
+
+#Question2
+
+##Null Hypothesis
+* There is no relationship between handednes and ataxic walking in intoxicated individuals
+
+##Alternative Hypothesis
+* Ataxic walking in intoxicated individuals and hadedness are related. Individuals tend to orientate themselves in accordance with the dominant side.
+
+##Statistical Test
+* Wilcoxin rank-sum 
+###Assumptions of the statistical test
+* independent errors
+* data is unmatched (as comparison across are being made for example)
+* samples are drawn from populations witht the same shape distribution
+```{r question2}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+
+# View and Import Dataset Question 2 CSV
+
+q2 <- read.csv("question2.csv")
+q2data<- tbl_df(q2)
+q2data
+
+# Plots
+boxplot(q2data$first_stumble ~ q2data$handedness)
+
+par(mfrow = c(1,2),mar = c(4, 4, 2, 1),oma = c(0, 0, 1, 0)) 
+
+mosaicplot(q2data$handedness ~ q2data$first_stumble, main = "Handedness against position of first stumble", ylab = "First Stumble (1= rightwards, 2 = leftwards)", xlab = "Handedness (1 = right-handed, 2 = left-handed)")
+
+mosaicplot(q2data$final_position ~ q2data$handedness,main = "Handedness against final position",ylab = "Final Stimble (1= rightwards, 2 = leftwards)",xlab = "Handedness (1 = right-handed, 2 = left-handed)")
+
+wilcox.test(first_stumble ~ handedness, data = q2data, paired = FALSE)
+
+wilcox.test(final_position~handedness,data = q2data,paired = FALSE)
+
+par(mfrow = c(1,1),mar = c(4, 4, 2, 1),oma = c(0, 0, 1, 0))            
+```
+##Outcome Analysis
+* The null hypothesis may be rejected as handedness was shown to be related with first stumble (_p_ <0.05) and final position (_p_ = 0.04). These results illustrate that intoxicated individuals are more likely to exhibit ataxic gait that is skewed to her/his dominant side.
+
+#Question3
+
+##Null Hypothesis
+* There is nor relationsip between running time and calories
+
+##Alternative Hypothesis
+* There is a directly proportional relatiolnship between running time and caloreies consumed
+
+##Statistical Test(s)
+* Linear Regression
+###Assumptions of the statistical test
+* linear relationship exists between the variables
+* independent observations
+* x variable measured without error
+* normally distributed residuals
+* homoskedastic residuals
+
+```{r question3}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+
+# View and Import Dataset Question 3 CSV
+q3 <- read.csv("question3.csv")
+q3cal <- tbl_df(q3)
+q3cal
+
+# Plot
+
+plot(q3cal$calories ~ q3cal$time,
+      main = "Relationship between an amateur runner's running time and calories consumed", ylab = "Calories Consumed (cal)", xlab = "Running Time (s)")
+
+p <- qplot(x = time, y = calories,data = q3cal,main = "Relationship between an amateur runner's running time and calories consumed",ylab = "Calories Consumed (cal)",xlab = "Running Time (s)")
+
+#Pearson Correlation and print the summary statistics
+
+q3cal.cor <- with(q3cal, cor.test(method = 'pearson', x = time, y = calories))
+q3cal.cor
+
+#Annotate r and p values onto the plot
+
+p + annotate("text", x = 2150, y = 420, label = "r = -0.7") + annotate("text", x = 2150, y = 410, label = "p = 0.002")
+
+# View
+par(mfrow = c(1,2),mar = c(4, 4, 2, 1),oma = c(0, 0, 1, 0))
+
+#Summary of linear regression
+q3cal.reg <- lm(calories ~ time, data = q3cal)
+summary(q3cal.reg)
+
+#Plot
+
+plot(x = q3cal.reg$fitted.values,y = q3cal.reg$residuals,xlab = "Fitted Values",ylab = "Residuals",main = "Homoskedasticity of residuals")
+abline(h = 0)
+
+# 
+qqnorm(q3cal.reg$residuals, main = "Normal residula distribution")
+qqline(q3cal.reg$residuals)
+
+# Overall Title
+mtext("Regression analysis", outer = TRUE)
+```
+##Outcome Analysis
+* The data fits all assumptions of a linear regression, including homoskedasticity and normal distribution of the residuals.
+* The variables have a fairly strong negative correlation (-0.07). Because the _p_ value is small (0.002), the null hypothesis can be rejected. 
+* CONCLUSION: running time and calorie consumption are inversely proportional 
+
+#question4
+```{r question4}
+
+foo <- rnorm(10000, mean = 60, sd = 3) # final mark
+bar <- rnorm(10000, mean = 68, sd = 5) # project mark
+baz <- rep(seq(from = 1997, to = 2006), each = 1) # years
+
+years <- sample(baz, 150, replace = TRUE,prob = c(0.05, 0.05, 0.08, 0.08, 0.1, 0.13, 0.14, 0.13, 0.12, 0.12))
+
+projectmark <- sample(bar, 150, replace = TRUE)
+
+finalmark <- sample(foo, 150, replace = TRUE)
+
+q4plot <- data_frame(year = years,projectmark = round(projectmark, 1),finalmark = round(finalmark, 1)) %>%
+arrange(years)
+
+# View
+q4plot
+
+# Tidying Data
+data_tidy <- q4plot %>%
+    mutate(year = factor(year)) %>%
+    gather(key = key, value = value, -year) %>%
+    arrange(year)
+
+# Plot
+with (data_tidy, boxplot(value ~ key,main = "Marks",ylab = "Percentage"))
+```
