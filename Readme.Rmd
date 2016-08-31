@@ -183,5 +183,5 @@ data_tidy <- q4plot %>%
     arrange(year)
 
 # Plot
-with (data_tidy, boxplot(value ~ key,ylab="percentages, main="percentage of year marks over the years"))
+with (data_tidy, boxplot(value ~ key,main = "Main",ylab = "percentage"))
 ```
